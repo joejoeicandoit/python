@@ -37,8 +37,8 @@ logger.setLevel(logging.INFO)
 
 
 hostname = 'FTPサーバーIP'  # 接続先サーバーのホスト名
-username = 'yojucho'  # ユーザ名
-password = 'ebisu202105!#'  # ログインパスワード
+username = 'username'  # ユーザ名
+password = 'password'  # ログインパスワード
 port = 21  # FTPサーバーのポート
 upload_src_path = 'D:/Temp/itemPackageCustomDataClient.dat'  # アップロードするファイルパス
 upload_dst_path = 'STOR /Teams/PCContents/Title/Lodoss/temp/itemPackageCustomDataClient.dat'  # アップロード先のパス(STOR はアップロードする為のFTPコマンドなので必須)
