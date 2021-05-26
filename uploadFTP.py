@@ -40,7 +40,7 @@ hostname = 'FTPサーバーIP'  # 接続先サーバーのホスト名
 username = 'username'  # ユーザ名
 password = 'password'  # ログインパスワード
 port = 21  # FTPサーバーのポート
-upload_src_path = 'D:/test,txt'  # アップロードするファイルパス
+upload_src_path = 'D:/test.txt'  # アップロードするファイルパス
 upload_dst_path = 'STOR /test.txt'  # アップロード先のパス(STOR はアップロードする為のFTPコマンドなので必須)
 timeout = 50
 
