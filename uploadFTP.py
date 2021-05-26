@@ -36,7 +36,7 @@ logging.basicConfig(
 logger.setLevel(logging.INFO)
 
 
-hostname = 'FTPサーバーIP'  # 接続先サーバーのホスト名
+hostname = 'FTPServerIP'  # 接続先サーバーのホスト名
 username = 'username'  # ユーザ名
 password = 'password'  # ログインパスワード
 port = 21  # FTPサーバーのポート
