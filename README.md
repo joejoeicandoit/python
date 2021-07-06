@@ -1,2 +1,2 @@
 # python
-Study python
+This is my Python Project
