@@ -5,6 +5,7 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
+from tkinter import messagebox
 from ftplib import FTP
 import os
 import shutil
@@ -14,43 +15,55 @@ logpre = '*.log.pre'
 changeLog = "log"
 
 
+
+
+# dateBox의 입력값을 8자리로 제한
+def limit_char(int):
+    return len(int) <= 8
+
+
 # 다운로드 버튼 클릭
 def LogFileDownload_Click():
     _vaildate_textbox()
 
-# dateBox에 입력한 날짜값 체크
+## 날짜값 검증
 def _vaildate_textbox():
-    value = dateBox.get()    
+    value = dateBox.get()
     textbox_len = len(dateBox.get())
     num = 8
 
     if value is "":
-        err_label.configure(text="日付を入力してください")
+        err_label.configure(text="날짜를 입력해 주세요")
+        #err_label.configure(text="日付を入力してください")
 
     elif num > textbox_len:
-        err_label.configure(text="日付を確認して下さい (ex 20200101)")
+        err_label.configure(text="날짜를 확인해 주세요 (ex 20200101)")
+        #err_label.configure(text="日付を確認して下さい (ex 20200101)")
 
     elif num < textbox_len:
-        err_label.configure(text="正しい日付を入力してください：" + value)
+        err_label.configure(text="정상적인 날짜값을 입력해 주세요：" + value)
+        #err_label.configure(text="正しい日付を入力してください：" + value)
         textBox_Clear()
 
-    else:        
+    else:
         _selectDownload_Folder()
-        _filedown_Stsrt(logpre, changeLog)        
-        result_label.configure(text="Logファイル (" + value + ") をダウンロードしました。")
+        _filedown_Stsrt(logpre, changeLog)
+        result_label.configure(text="로그파일 (" + value + ") 을 다운로드 했습니다.")
+        #result_label.configure(text="Logファイル (" + value + ") をダウンロードしました。")
         textBox_Clear()
 
 # 파일 다운로드 경로
-def _selectDownload_Folder():    
+def _selectDownload_Folder():
     err_label.configure(text="")
     downloadPath.configure(text="")
     win.dirName = filedialog.askdirectory()
-    downloadPath.configure(text="ダウンロード先： " + win.dirName)      
+    downloadPath.configure(text="다운로드 경로： " + win.dirName)
+    #downloadPath.configure(text="ダウンロード先： " + win.dirName)
 
 # 다운로드로 지정한 폴더내 파일 삭제
 def removeAllFile(filePath):
     if os.path.exists(filePath):
-        for file in os.scandir(filePath):            
+        for file in os.scandir(filePath):
             os.remove(file.path)
         else:
             pass
@@ -59,9 +72,22 @@ def removeAllFile(filePath):
 # 다운로드 실행
 def _filedown_Stsrt(logpre, changeLog):
     # ------- FTP 접속 정보 -------
-    ftp = FTP('xxx.xxx.xxx.xxx')
-    ftp.login('USER','PADDWORD')
-    ftp.cwd('TestWorld/BACKUP/')
+    """
+    comment: ftp서버, 파일이 놓여진 경로가 각각2개라서 list를 작성
+    """
+    #ftp = FTP('xxx.xxx.xxx.xxx')
+    ftpList=['127.0.0.1', '127.0.0.1']
+    ftpDirList=['PubWorld', 'TestWorld']
+    num = radioValue.get()
+    ftp = FTP(ftpList[num])
+    ftp.login('testuser','testpass')
+
+    if num==0:
+        ftpDir=ftpDirList[0]
+    elif num==1:
+        ftpDir=ftpDirList[1]
+
+    ftp.cwd(ftpDir + '/BACKUP/')
     # ------- FTP 접속 정보 -------
     
     fileDate = ""
@@ -69,7 +95,7 @@ def _filedown_Stsrt(logpre, changeLog):
     path = ""
 
     fileDate = dateBox.get()
-    path = win.dirName       
+    path = win.dirName
     
     
     removeAllFile(path)
@@ -127,17 +153,24 @@ alertLbl2 = Label(win, text="주의: 다운로드로 지정한 폴더내의 파�
 alertLbl1.place(x=10, y=10)
 alertLbl2.place(x=10, y=30)
 
-# 라디오 버튼 설정: 로그 파일이 있는 서버선택
+# 라디오 버튼: 파일서버 선택
 radioValue = IntVar()
-radioOne = Radiobutton(win, text='PUB환경', variable=radioValue, value=1)
-radioTwo = Radiobutton(win, text='IBT환경', variable=radioValue, value=2)
+radioValue.set(0)
+radioOne = Radiobutton(win, text='PUB환경', variable=radioValue, value=0)
+radioTwo = Radiobutton(win, text='IBT환경', variable=radioValue, value=1)
 radioOne.place(x=10, y=70)
 radioTwo.place(x=100, y=70)
 
 # 텍스트 박스 설정: 날짜값 입력
 dateLbl1 = Label (win, text="날짜：")
 #dateLbl1 = Label (win, text="日付`：")
-dateBox = ttk.Entry(win, width=8, textvariable=str)
+"""
+comment: dateBox에 8자리까지만 입력되도록 수정
+"""
+#dateBox = ttk.Entry(win, width=8, textvariable=str)
+vc = win.register(limit_char)
+dateBox = ttk.Entry(win, width=8, textvariable=int, validate="key", validatecommand=(vc, "%P"))
+
 downBtn = Button(win, text="다운로드 시작", command=LogFileDownload_Click)
 #downBtn = Button(win, text="ダウンロード開始", command=LogFileDownload_Click)
 dateLbl1.place(x=10, y=100)
