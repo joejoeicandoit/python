@@ -12,7 +12,7 @@ import shutil
 
 
 # dateBox의 입력값을 8자리로 제한
-def limit_char(int):
+def _limit_char(int):
     _init_message()
     return len(int) <= 8
 
@@ -27,7 +27,7 @@ def _init_dateBox():
     dateBox.delete(0, END)
 
 # 날짜박스에 입력한 값이 int인지 검증
-def isint():
+def _isint():
     value = dateBox.get()
     try:
         int(value, 10)
@@ -39,7 +39,7 @@ def isint():
         return True
 
 # 다운로드로 지정한 폴더내 파일 삭제
-def removeAllFile(filePath):
+def _removeAllFile(filePath):
     if os.path.exists(filePath):
         for file in os.scandir(filePath):
             os.remove(file.path)
@@ -51,7 +51,7 @@ def _selectDownload_Folder():
     _init_message()
     win.dirName = filedialog.askdirectory()
     dirPath = win.dirName
-    removeAllFile(dirPath)
+    _removeAllFile(dirPath)
     return win.dirName
     #downloadPath.configure(text="다운로드 경로： " + win.dirName)
     #downloadPath.configure(text="ダウンロード先： " + win.dirName)
@@ -83,22 +83,17 @@ def _change_fileExt(dirPath):
 # FTP 서버 접속해서 파일 다운로드 실행
 def _filedown_Stsrt(dirPath):    
     # ------- FTP 서버 정보 -------
-    #ftp = FTP('xxx.xxx.xxx.xxx')
+    #ftpSvrIp=('127.0.0.1')
     ftpSvrIp=['127.0.0.1', '127.0.0.1']
-    sourceDir=['PubWorld', 'TestWorld']
     user='testuser'
     passwd='testpass'
+    sourceDir=['TestWorld', 'OfficeTest']
     # ------- FTP 서버 정보 -------
 
-    getRadioValue = radioValue.get()
-    if getRadioValue==0:
-        cwdDir=sourceDir[0]
-    elif getRadioValue==1:
-        cwdDir=sourceDir[1]
-
-    ftp = FTP(ftpSvrIp[getRadioValue])
+    # FTP 서버접속
+    ftp = FTP(ftpSvrIp[radioValue.get()])
     ftp.login(user, passwd)
-    ftp.cwd(cwdDir + '/BACKUP/')
+    ftp.cwd(sourceDir[radioValue.get()] + '/BACKUP/')
 
     sourceExt = '*.log.pre' #다운로드할 파일
     fileDate = ""
@@ -107,8 +102,6 @@ def _filedown_Stsrt(dirPath):
 
     fileDate = dateBox.get()
     path = dirPath
-    #path = win.dirName
-    #removeAllFile(path)
 
     logFile = fileDate + sourceExt #'*.log.pre'
     files = ftp.nlst(logFile)
@@ -122,9 +115,12 @@ def _filedown_Stsrt(dirPath):
 
 # -----< 다운로드 버튼클릭 >-----
 def LogFileDownload_Click():
-    checkValue = isint()
+    checkValue = _isint()
+    textbox_len = len(dateBox.get())
     value = dateBox.get()
-    if checkValue == True:
+
+    # 8자리의 정수가 입력될 경우 실행
+    if checkValue == True and textbox_len == 8:
         dirPath = _selectDownload_Folder()
         _filedown_Stsrt(dirPath)
         _init_dateBox()
@@ -166,7 +162,7 @@ radioTwo.place(x=100, y=70)
 # 날자입력용 텍스트 박스
 dateLbl1 = Label (win, text="날짜：")
 #dateLbl1 = Label (win, text="日付`：")
-vc = win.register(limit_char)
+vc = win.register(_limit_char)
 dateBox = ttk.Entry(win, width=8, textvariable=int, validate="key", validatecommand=(vc, "%P"))
 
 # 다운로드 버튼위치
