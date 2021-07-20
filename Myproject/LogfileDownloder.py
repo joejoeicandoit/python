@@ -2,12 +2,15 @@
 # FTP 서버에서 파일 다운로드 by. yojucho
 # pyinstaller [Python file] --onefile --noconsole
 #################################################
+#from tkinter import *
+import os
+import glob
 from tkinter import *
 from tkinter import filedialog
+from ftplib import FTP
+
 from tkinter import ttk
 from tkinter import messagebox
-from ftplib import FTP
-import os
 import shutil
 
 
@@ -52,9 +55,9 @@ def _selectDownload_Folder():
     win.dirName = filedialog.askdirectory()
     dirPath = win.dirName
     _removeAllFile(dirPath)
-    return win.dirName
-    #downloadPath.configure(text="다운로드 경로： " + win.dirName)
+    downloadPath.configure(text="다운로드 경로： " + win.dirName)
     #downloadPath.configure(text="ダウンロード先： " + win.dirName)
+    return win.dirName
 
 # 0Kb 파일삭제
 def _delete_zeroSize_files(dirPath):
@@ -112,31 +115,43 @@ def _filedown_Stsrt(dirPath):
     ftp.quit()
     ## FTP 접속종료
 
+# 다운로드된 파일 존재체크
+def _check_Folder(dirPath, dateValue):
+    files = glob.glob(dirPath + "/*")
+    
+    if len(files) <= 0:        
+        return print("해당 날짜의 파일이 존재하지 않습니다.")
+    else:
+        result_label.configure(text="로그파일 (" + dateValue + ") 을 다운로드 했습니다.")
+        return print("다운로드 완료")
+
+
+
 
 # -----< 다운로드 버튼클릭 >-----
-def LogFileDownload_Click():
+def download_Click():
+    dateValue = dateBox.get()
     checkValue = _isint()
     textbox_len = len(dateBox.get())
-    value = dateBox.get()
 
     # 8자리의 정수가 입력될 경우 실행
     if checkValue == True and textbox_len == 8:
         dirPath = _selectDownload_Folder()
         _filedown_Stsrt(dirPath)
-        _init_dateBox()
         _delete_zeroSize_files(dirPath)
         _change_fileExt(dirPath)
-
-        result_label.configure(text="로그파일 (" + value + ") 을 다운로드 했습니다.")
+        #result_label.configure(text="로그파일 (" + value + ") 을 다운로드 했습니다.")
         #result_label.configure(text="Logファイル (" + value + ") をダウンロードしました。")
+        _init_dateBox()
+        _check_Folder(dirPath, dateValue)
     else:
         _init_message()
         _init_dateBox()
-        err_label.configure(text="올바른 값을 입력해 주세요")
+        err_label.configure(text="올바른 (" + dateValue + ")값을 입력해 주세요")
 # -----< 다운로드 버튼클릭 >-----
 
 
-# App 화면구성
+# App 화면구성:START
 win = Tk()
 win.title("파일 다운로더")
 #win.title("【Title】 LogFile Download")
@@ -163,11 +178,11 @@ radioTwo.place(x=100, y=70)
 dateLbl1 = Label (win, text="날짜：")
 #dateLbl1 = Label (win, text="日付`：")
 vc = win.register(_limit_char)
-dateBox = ttk.Entry(win, width=8, textvariable=int, validate="key", validatecommand=(vc, "%P"))
+dateBox = Entry(win, width=8, textvariable=int, validate="key", validatecommand=(vc, "%P"))
 
 # 다운로드 버튼위치
-downBtn = Button(win, text="다운로드 시작", command=LogFileDownload_Click)
-#downBtn = Button(win, text="ダウンロード開始", command=LogFileDownload_Click)
+downBtn = Button(win, text="다운로드 시작", command=download_Click)
+#downBtn = Button(win, text="ダウンロード開始", command=download_Click)
 dateLbl1.place(x=10, y=100)
 dateBox.place(x=50, y=100)
 downBtn.place(x=120, y=95)
@@ -178,11 +193,11 @@ downloadPath.place(x=10, y=130)
 
 # 결과 표시용 메세지
 result_label = Label(win, foreground = 'blue')
-result_label.place(x=10, y=150)
+result_label.place(x=10, y=170)
 
 # 에러 표시용 메세지
 err_label = Label(win, foreground = 'red')
-err_label.place(x=10, y=170)
+err_label.place(x=10, y=200)
 
 win.mainloop()
-# App 화면구성:
+# App 화면구성:END
