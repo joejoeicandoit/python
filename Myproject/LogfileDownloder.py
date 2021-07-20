@@ -2,16 +2,11 @@
 # FTP 서버에서 파일 다운로드 by. yojucho
 # pyinstaller [Python file] --onefile --noconsole
 #################################################
-#from tkinter import *
 import os
 import glob
 from tkinter import *
 from tkinter import filedialog
 from ftplib import FTP
-
-from tkinter import ttk
-from tkinter import messagebox
-import shutil
 
 
 # dateBox의 입력값을 8자리로 제한
@@ -84,18 +79,21 @@ def _change_fileExt(dirPath):
         os.rename(dirPath + '/'+ target[i], dirPath + '/' + convert)
 
 # FTP 서버 접속해서 파일 다운로드 실행
-def _filedown_Stsrt(dirPath):    
+def _filedown_Stsrt(dirPath):
     # ------- FTP 서버 정보 -------
-    #ftpSvrIp=('127.0.0.1')
-    ftpSvrIp=['127.0.0.1', '127.0.0.1']
-    user='testuser'
-    passwd='testpass'
-    sourceDir=['TestWorld', 'OfficeTest']
+    #ftpSvrIp=['127.0.0.1', '127.0.0.1']
+    #user='testuser'
+    #passwd='testpass'
+
+    ftpSvrIp=['172.21.150.157', '172.21.150.129']
+    user='logtools'
+    passwd='wkddnjsakstp1!'
     # ------- FTP 서버 정보 -------
 
     # FTP 서버접속
     ftp = FTP(ftpSvrIp[radioValue.get()])
     ftp.login(user, passwd)
+    sourceDir=['TestWorld', 'OfficeTest']
     ftp.cwd(sourceDir[radioValue.get()] + '/BACKUP/')
 
     sourceExt = '*.log.pre' #다운로드할 파일
@@ -115,7 +113,7 @@ def _filedown_Stsrt(dirPath):
     ftp.quit()
     ## FTP 접속종료
 
-# 다운로드된 파일 존재체크
+# 다운로드된 파일 존제체크
 def _check_Folder(dirPath, dateValue):
     files = glob.glob(dirPath + "/*")
     
@@ -147,7 +145,7 @@ def download_Click():
     else:
         _init_message()
         _init_dateBox()
-        err_label.configure(text="올바른 (" + dateValue + ")값을 입력해 주세요")
+        err_label.configure(text="올바른 날짜를 (" + dateValue + ") 입력해 주세요")
 # -----< 다운로드 버튼클릭 >-----
 
 
@@ -157,6 +155,14 @@ win.title("파일 다운로더")
 #win.title("【Title】 LogFile Download")
 win.geometry("540x300+100+100")
 win.resizable(False, False)
+
+# 배경이미지 삽입
+sourcePath= os.path.dirname( os.path.abspath( __file__ ) ) # python 파일의 절대경로 확인
+backImage = PhotoImage(file=sourcePath + r"\backimg.png") # 이미지 파일경로 설정
+canvas = Canvas(bg="black", width=240, height=240)
+canvas.place(x=280, y=50)
+canvas.create_image(0, 0, image=backImage, anchor=NW)
+
 
 # 주의 문구
 alertLbl1 = Label(win, text="주의: 로그 파일이 없는경우에는 하루 전으로 설정해 주세요.")
