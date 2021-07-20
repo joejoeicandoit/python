@@ -2,10 +2,10 @@
 # FTP 서버에서 파일 다운로드 by. yojucho
 # pyinstaller [Python file] --onefile --noconsole
 #################################################
-import os
-import glob
+import os, glob
 from tkinter import *
 from tkinter import filedialog
+from tkinter import messagebox as messagebox
 from ftplib import FTP
 
 
@@ -48,10 +48,7 @@ def _removeAllFile(filePath):
 def _selectDownload_Folder():
     _init_message()
     win.dirName = filedialog.askdirectory()
-    dirPath = win.dirName
-    _removeAllFile(dirPath)
-    downloadPath.configure(text="다운로드 경로： " + win.dirName)
-    #downloadPath.configure(text="ダウンロード先： " + win.dirName)
+    _removeAllFile(win.dirName)
     return win.dirName
 
 # 0Kb 파일삭제
@@ -117,13 +114,12 @@ def _filedown_Stsrt(dirPath):
 def _check_Folder(dirPath, dateValue):
     files = glob.glob(dirPath + "/*")
     
-    if len(files) <= 0:        
-        return print("해당 날짜의 파일이 존재하지 않습니다.")
+    if len(files) <= 0:
+        messagebox.showwarning("경고", "해당 날짜의 (" + dateValue + ") 로그파일이 존재하지않습니다."
+         + "\n" + "하루 전의 날짜로 입력해보세요 ")
     else:
-        result_label.configure(text="로그파일 (" + dateValue + ") 을 다운로드 했습니다.")
-        return print("다운로드 완료")
-
-
+        downloadPath.configure(justify=LEFT, text="다운로드 경로： " + "\n" + win.dirName)
+        result_label.configure(justify=LEFT, text="로그파일 (" + dateValue + ") 을 다운로드 했습니다.")
 
 
 # -----< 다운로드 버튼클릭 >-----
@@ -138,14 +134,12 @@ def download_Click():
         _filedown_Stsrt(dirPath)
         _delete_zeroSize_files(dirPath)
         _change_fileExt(dirPath)
-        #result_label.configure(text="로그파일 (" + value + ") 을 다운로드 했습니다.")
-        #result_label.configure(text="Logファイル (" + value + ") をダウンロードしました。")
         _init_dateBox()
         _check_Folder(dirPath, dateValue)
     else:
         _init_message()
         _init_dateBox()
-        err_label.configure(text="올바른 날짜를 (" + dateValue + ") 입력해 주세요")
+        messagebox.showerror("경고", "올바른 날짜를 (" + dateValue + ") 입력해 주세요")
 # -----< 다운로드 버튼클릭 >-----
 
 
@@ -165,10 +159,8 @@ canvas.create_image(0, 0, image=backImage, anchor=NW)
 
 
 # 주의 문구
-alertLbl1 = Label(win, text="주의: 로그 파일이 없는경우에는 하루 전으로 설정해 주세요.")
-alertLbl2 = Label(win, text="주의: 다운로드로 지정한 폴더내의 파일은 삭제 됩니다.")
-#alertLbl1 = Label(win, text="注意: ログファイルが無い時は日付を1日前にしてみて下さい")
-#alertLbl2 = Label(win, text="注意: ダウンロードフォルダの中にある既存ファイルは削除されます")
+alertLbl1 = Label(win, text="주의: 다운로드로 지정한 폴더내의 파일은 삭제 됩니다.")
+alertLbl2 = Label(win, text="주의: 로그 파일이 없는경우에는 하루 전으로 설정해 주세요.")
 alertLbl1.place(x=10, y=10)
 alertLbl2.place(x=10, y=30)
 
@@ -182,24 +174,20 @@ radioTwo.place(x=100, y=70)
 
 # 날자입력용 텍스트 박스
 dateLbl1 = Label (win, text="날짜：")
-#dateLbl1 = Label (win, text="日付`：")
+dateLbl1.place(x=10, y=100)
 vc = win.register(_limit_char)
 dateBox = Entry(win, width=8, textvariable=int, validate="key", validatecommand=(vc, "%P"))
-
-# 다운로드 버튼위치
-downBtn = Button(win, text="다운로드 시작", command=download_Click)
-#downBtn = Button(win, text="ダウンロード開始", command=download_Click)
-dateLbl1.place(x=10, y=100)
 dateBox.place(x=50, y=100)
+downBtn = Button(win, text="다운로드 시작", command=download_Click)
 downBtn.place(x=120, y=95)
 
 # 다운로드 경로 표시용 메세지
 downloadPath = Label(win, text=" ")
-downloadPath.place(x=10, y=130)
+downloadPath.place(x=10, y=150)
 
 # 결과 표시용 메세지
 result_label = Label(win, foreground = 'blue')
-result_label.place(x=10, y=170)
+result_label.place(x=10, y=200)
 
 # 에러 표시용 메세지
 err_label = Label(win, foreground = 'red')
