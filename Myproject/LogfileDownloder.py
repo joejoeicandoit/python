@@ -78,11 +78,7 @@ def _change_fileExt(dirPath):
 # FTP 서버 접속해서 파일 다운로드 실행
 def _filedown_Stsrt(dirPath):
     # ------- FTP 서버 정보 -------
-    #ftpSvrIp=['127.0.0.1', '127.0.0.1']
-    #user='testuser'
-    #passwd='testpass'
-
-    ftpSvrIp=['172.21.150.157', '172.21.150.129']
+    ftpSvrIp=['127.0.0.1', '127.0.0.1']
     user='logtools'
     passwd='wkddnjsakstp1!'
     # ------- FTP 서버 정보 -------
