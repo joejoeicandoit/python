@@ -1,7 +1,3 @@
-#############################################################
-# FTP 서버에서 파일 다운로드 by. yojucho
-# pyinstaller 파일이름.py --onefile --noconsole
-#############################################################
 import os, glob
 from tkinter import *
 from tkinter import filedialog
