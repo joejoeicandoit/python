@@ -9,8 +9,10 @@
 <body>
     <h1>Hello, Japan</h1>
     <ul>
-        {% for bullet in bullets%}
-        <li>{{ bullet }}</li>
+        {% for bullet in bullets %}
+            {% if loop.index % 3 != 0  %}
+                <li>{{ bullet }}</li>
+            {% endif  %}
         {% endfor %}
     </ul>
 </body>

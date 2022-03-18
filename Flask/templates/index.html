@@ -1,0 +1,14 @@
+{%  extends "base.html" %}
+{% block content %}
+    <h1>初めてのFLASKブログ</h1>
+    <a href="/create" role="button">新規作成</a>
+    {% for post in posts %}
+        <article>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.body }}</p>
+            <p>作成日付: {{ post.created_at}}</p>
+            <a href="/{{post.id}}/update" role="button">編集</a>
+            <a href="/{{post.id}}/delete" role="button">削除</a>
+        </article>
+    {% endfor %}
+{% endblock %}
