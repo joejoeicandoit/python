@@ -15,3 +15,8 @@ pip/pip3コマンドがどのPython環境のpipコマンドかは pip -V で確�
    ①アプリインストーラ（python.exe）
    ②アプリインストーラ（python3.exe）
  
+### package 一括にinstall
+https://pip.pypa.io/en/latest/user_guide/#requirements-files
+
+>(Create package list) $ python -m pip freeze > requirements.txt
+>(Install packages) $ python -m pip install requirement.txt
